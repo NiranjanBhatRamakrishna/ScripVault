@@ -2,9 +2,9 @@ import React from 'react';
 
 function Header() {
   return (
-    <header>
+    <header className="App-header">
       <h1>ScripVault</h1>
-      {/* Add more navigation links here */}
+      <h2>Stock Information</h2>
     </header>
   );
 }
