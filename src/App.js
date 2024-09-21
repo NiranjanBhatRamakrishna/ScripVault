@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import MainContent from './MainContent'; // Import the MainContent component
-import Auth from './components/Auth'; // Import the Auth component
+import MainContent from './MainContent';
+import Auth from './components/Auth';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
   return (
     <div className="App">
       <Header />
-      <MainContent />  {/* Add the MainContent here */}
-      <Auth />  {/* Add the Auth component here */}
+      {!isAuthenticated ? (
+        <Auth onLogin={handleLogin} />
+      ) : (
+        <MainContent />
+      )}
       <Footer />
     </div>
   );

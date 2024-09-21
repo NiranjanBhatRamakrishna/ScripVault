@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Auth = () => {
+const Auth = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -8,7 +8,7 @@ const Auth = () => {
     e.preventDefault();
     console.log("Email:", email);
     console.log("Password:", password);
-    // You can add API call for registration/login here later
+    onLogin(); // Call onLogin to notify the App component
   };
 
   return (
