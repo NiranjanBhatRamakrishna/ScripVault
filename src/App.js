@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import MainContent from './MainContent';
 import Auth from './components/Auth';
+import Dashboard from './components/Dashboard';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -18,7 +19,10 @@ function App() {
       {!isAuthenticated ? (
         <Auth onLogin={handleLogin} />
       ) : (
-        <MainContent />
+        <>
+          <Dashboard />  {/* Add the Dashboard component here */}
+          <MainContent />
+        </>
       )}
       <Footer />
     </div>
