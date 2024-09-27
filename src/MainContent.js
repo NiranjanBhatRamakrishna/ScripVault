@@ -16,8 +16,11 @@ const MainContent = () => {
         setError('Error fetching stock data');
       }
     };
-    fetchStockData();
-  }, []);
+    // Ensure stock data is only fetched once
+    if (!stockData) {
+      fetchStockData();
+    }
+  }, [stockData]);
 
   const renderStockData = () => {
     if (!stockData || !stockData['Time Series (Daily)']) {
@@ -25,7 +28,7 @@ const MainContent = () => {
     }
 
     const timeSeries = stockData['Time Series (Daily)'];
-    const dates = Object.keys(timeSeries); // Get the dates
+    const dates = [...new Set(Object.keys(timeSeries))]; // De-duplicate the dates
 
     return dates.slice(0, 5).map((date) => ( // Show last 5 records
       <div key={date}>
