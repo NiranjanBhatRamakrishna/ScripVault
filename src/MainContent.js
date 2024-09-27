@@ -1,26 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const MainContent = () => {
   const [stockData, setStockData] = useState(null);
   const [error, setError] = useState(null);
 
+  // Fetch stock data only once
+  const fetchStockData = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=2QDMGD2PD01YJEWU'
+      );
+      setStockData(response.data);
+      console.log("Fetched stock data:", response.data); // Debugging log
+    } catch (err) {
+      setError('Error fetching stock data');
+    }
+  }, []);
+
   useEffect(() => {
-    const fetchStockData = async () => {
-      try {
-        const response = await axios.get(
-          'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=2QDMGD2PD01YJEWU'
-        );
-        setStockData(response.data);
-      } catch (err) {
-        setError('Error fetching stock data');
-      }
-    };
-    // Ensure stock data is only fetched once
     if (!stockData) {
+      console.log("Fetching stock data..."); // Debugging log
       fetchStockData();
     }
-  }, [stockData]);
+  }, [stockData, fetchStockData]);
 
   const renderStockData = () => {
     if (!stockData || !stockData['Time Series (Daily)']) {
@@ -28,9 +31,10 @@ const MainContent = () => {
     }
 
     const timeSeries = stockData['Time Series (Daily)'];
-    const dates = [...new Set(Object.keys(timeSeries))]; // De-duplicate the dates
+    const dates = [...new Set(Object.keys(timeSeries))]; // De-duplicate dates
 
-    return dates.slice(0, 5).map((date) => ( // Show last 5 records
+    console.log("Rendering stock data..."); // Debugging log
+    return dates.slice(0, 5).map((date) => (
       <div key={date}>
         <h3>{date}</h3>
         <p>Open: {timeSeries[date]['1. open']}</p>
@@ -44,7 +48,7 @@ const MainContent = () => {
 
   return (
     <div>
-      {error ? <p>{error}</p> : renderStockData()} {/* Show error if any */}
+      {error ? <p>{error}</p> : renderStockData()}
     </div>
   );
 };
