@@ -41,8 +41,7 @@ const MainContent = () => {
 
   return (
     <div>
-      <h2>Stock Information</h2>
-      {error ? <p>{error}</p> : renderStockData()}
+      {error ? <p>{error}</p> : renderStockData()} {/* Show error if any */}
     </div>
   );
 };
