@@ -5,25 +5,41 @@ const MainContent = () => {
   const [stockData, setStockData] = useState(null);
   const [error, setError] = useState(null);
 
-  // Fetch stock data only once
   const fetchStockData = useCallback(async () => {
     try {
       const response = await axios.get(
         'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=2QDMGD2PD01YJEWU'
       );
-      setStockData(response.data);
-      console.log("Fetched stock data:", response.data); // Debugging log
+      console.log("Raw response:", response.data); // Debugging log to check data structure
+
+      if (response.data['Time Series (Daily)']) {
+        const timeSeries = response.data['Time Series (Daily)'];
+        
+        // Get unique dates and sort them in descending order
+        const sortedUniqueDates = [...new Set(Object.keys(timeSeries))]
+          .sort((a, b) => new Date(b) - new Date(a)); // Sort by most recent date
+
+        // Rebuild the data with only unique sorted dates
+        const filteredTimeSeries = sortedUniqueDates.reduce((acc, date) => {
+          acc[date] = timeSeries[date];
+          return acc;
+        }, {});
+
+        setStockData({
+          ...response.data,
+          'Time Series (Daily)': filteredTimeSeries,
+        });
+      } else {
+        setError('Unexpected response format.');
+      }
     } catch (err) {
       setError('Error fetching stock data');
     }
   }, []);
 
   useEffect(() => {
-    if (!stockData) {
-      console.log("Fetching stock data..."); // Debugging log
-      fetchStockData();
-    }
-  }, [stockData, fetchStockData]);
+    fetchStockData();
+  }, [fetchStockData]);
 
   const renderStockData = () => {
     if (!stockData || !stockData['Time Series (Daily)']) {
@@ -31,10 +47,10 @@ const MainContent = () => {
     }
 
     const timeSeries = stockData['Time Series (Daily)'];
-    const dates = [...new Set(Object.keys(timeSeries))]; // De-duplicate dates
+    const dates = Object.keys(timeSeries);
 
-    console.log("Rendering stock data..."); // Debugging log
-    return dates.slice(0, 5).map((date) => (
+    console.log("Rendering filtered stock data..."); // Debugging log
+    return dates.map((date, index) => (
       <div key={date}>
         <h3>{date}</h3>
         <p>Open: {timeSeries[date]['1. open']}</p>
