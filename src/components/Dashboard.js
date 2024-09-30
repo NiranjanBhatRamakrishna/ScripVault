@@ -1,5 +1,7 @@
+// src/components/Dashboard.js
+
 import React from 'react';
-import MainContent from '../MainContent'; // Adjusted import for correct path
+import MainContent from '../MainContent'; // Correct import path
 
 const Dashboard = () => {
   return (

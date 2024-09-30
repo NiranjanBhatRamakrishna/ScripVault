@@ -1,8 +1,9 @@
+// src/App.js
+
 import React, { useState } from 'react';
 import './App.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import MainContent from './MainContent';
 import Auth from './components/Auth';
 import Dashboard from './components/Dashboard';
 
@@ -19,10 +20,7 @@ function App() {
       {!isAuthenticated ? (
         <Auth onLogin={handleLogin} />
       ) : (
-        <>
-          <Dashboard />  {/* Add the Dashboard component here */}
-          <MainContent />
-        </>
+        <Dashboard />  
       )}
       <Footer />
     </div>
