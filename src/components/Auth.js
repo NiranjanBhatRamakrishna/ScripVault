@@ -1,23 +1,34 @@
-// src/components/Auth.js
-
-import React from 'react';
+import React, { useState } from 'react';
 
 const Auth = ({ onLogin }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Perform authentication logic here (e.g., validate user credentials)
-    // For simplicity, we'll just call onLogin to authenticate
-    onLogin();
+    console.log("Email:", email);
+    console.log("Password:", password);
+    onLogin(); // Call onLogin to notify the App component
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        {/* Add form fields as needed */}
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+        required
+      />
+      <button type="submit">Submit</button>
+    </form>
   );
 };
 
