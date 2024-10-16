@@ -28,7 +28,7 @@ const auth = (req, res, next) => {
     }
 };
 
-// Connect to MongoDB
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -43,22 +43,19 @@ app.get('/', (req, res) => {
     res.send("Welcome to ScripVault API");
 });
 
-// User registration route
+// Register user
 app.post('/register', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Check if user already exists
         let user = await User.findOne({ email });
         if (user) {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // Hash the password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Create a new user and save to DB
         user = new User({ email, password: hashedPassword });
         await user.save();
 
@@ -68,18 +65,16 @@ app.post('/register', async (req, res) => {
     }
 });
 
-// User login route
+// User login
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Check if user exists
         let user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'User does not exist' });
         }
 
-        // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials' });
@@ -93,7 +88,17 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// Protected route example
+// Profile route (protected)
+app.get('/profile', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password'); // Exclude password
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
+});
+
+// Example protected route
 app.get('/dashboard', auth, (req, res) => {
     res.json({ message: `Welcome, user ${req.user.id}` });
 });
