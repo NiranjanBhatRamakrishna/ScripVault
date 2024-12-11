@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../services/authService'; // Import login from the mock service
 
 const Auth = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Simple authentication logic for now
-    if (email && password) {
-      onLogin(); // Call the onLogin prop passed from App
+    try {
+      // Call the mock login function
+      const response = await login(email, password);
+      // Store token in localStorage
+      localStorage.setItem('token', response.token);
+      onLogin(); // Update parent state to indicate user is logged in
       navigate('/dashboard'); // Redirect to Dashboard
-    } else {
-      alert('Please enter valid credentials');
+    } catch (error) {
+      alert(error.message || 'Login failed. Please check your credentials.');
     }
   };
 
@@ -23,8 +27,8 @@ const Auth = ({ onLogin }) => {
       <form onSubmit={handleLogin}>
         <div>
           <input
-            type="email"
-            placeholder="Email"
+            type="text"
+            placeholder="Username"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -41,7 +45,7 @@ const Auth = ({ onLogin }) => {
         </div>
         <div>
           <button type="submit" style={{ padding: '10px 20px', fontSize: '16px' }}>
-            Submit
+            Login
           </button>
         </div>
       </form>
